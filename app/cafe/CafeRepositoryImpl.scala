@@ -75,16 +75,20 @@ class CafeRepositoryImpl @Inject()(
         .list
         .apply()
 
-      cafeRecords.map { cafeRecord =>
-        val averageRating = if (cafeRecord.ratings.isEmpty) {
-          None
-        } else {
-          Some(cafeRecord.ratings.foldLeft(BigDecimal(0))((acc, rating) => acc + (rating.value/cafeRecord.ratings.length)))
-        }
-        val images = cafeRecord.images.map(ir => Image(ir.url))
-        Cafe(cafeRecord.cafe_id, cafeRecord.name, Coordinate(cafeRecord.latitude, cafeRecord.longitude), averageRating.map(Rating(_)), images)
-      }
+      mkCafeEntities(cafeRecords)
     }
+
+  def mkCafeEntities(cafeRecords: Seq[CafeRecord]): Seq[Cafe] =  {
+    cafeRecords.map { cafeRecord =>
+      val averageRating = if (cafeRecord.ratings.isEmpty) {
+        None
+      } else {
+        Some(cafeRecord.ratings.foldLeft(BigDecimal(0))((acc, rating) => acc + (rating.value/cafeRecord.ratings.length)))
+      }
+      val images = cafeRecord.images.map(ir => Image(ir.url))
+      Cafe(cafeRecord.cafe_id, cafeRecord.name, Coordinate(cafeRecord.latitude, cafeRecord.longitude), averageRating.map(Rating(_)), images)
+    }
+  }
 
 
   override def findById(id: Long): Future[Option[Cafe]] = findAll.map(_.find(_.id == id))
