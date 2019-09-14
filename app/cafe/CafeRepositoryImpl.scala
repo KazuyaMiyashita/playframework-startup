@@ -74,16 +74,13 @@ class CafeRepositoryImpl @Inject()(
         .map { (cafe, images, ratings) => cafe.copy(images = images.toSeq, ratings = ratings.toSeq) }
         .list
         .apply()
-
-      mkCafeEntities(cafeRecords)
+      cafeRecords.map(mkCafeEntity)
     }
 
-  def mkCafeEntities(cafeRecords: Seq[CafeRecord]): Seq[Cafe] =  {
-    cafeRecords.map { cafeRecord =>
-      val averageRating = cafeRecord.ratings.map(_.value).reduceOption((acc, value) => acc  + (value/cafeRecord.ratings.length))
-      val images = cafeRecord.images.map(ir => Image(ir.url))
-      Cafe(cafeRecord.cafe_id, cafeRecord.name, Coordinate(cafeRecord.latitude, cafeRecord.longitude), averageRating.map(Rating(_)), images)
-    }
+  def mkCafeEntity(cafeRecord: CafeRecord): Cafe =  {
+    val averageRating = cafeRecord.ratings.map(_.value).reduceOption((acc, value) => acc  + (value/cafeRecord.ratings.length))
+    val images = cafeRecord.images.map(ir => Image(ir.url))
+    Cafe(cafeRecord.cafe_id, cafeRecord.name, Coordinate(cafeRecord.latitude, cafeRecord.longitude), averageRating.map(Rating(_)), images)
   }
 
 
