@@ -14,6 +14,12 @@ class UserRepositoryImpl @Inject()(
   implicit val session = AutoSession
   val tokenExpirationDuration = 1.day
 
+  def login(email: String, rawPassword: String): Future[Option[Token]] = {
+
+
+    ???
+  }
+
   def findByToken(token: String): Future[Option[User]] = {
     def mkUserEntity(rs: WrappedResultSet) = User(
       id = rs.get("id"),
