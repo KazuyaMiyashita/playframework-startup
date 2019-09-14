@@ -2,7 +2,7 @@ use `playframework-startup`;
 
 # drop
 drop table if exists `cafes`;
-drop table if exists `imgs`;
+drop table if exists `images`;
 drop table if exists `ratings`;
 
 # create
@@ -16,7 +16,7 @@ create table if not exists `cafes`
   index (`name`)
 );
 
-create table if not exists `imgs`
+create table if not exists `images`
 (
     `url`           varchar(255) unique not null,
     `cafe_id`       bigint unsigned not null,
