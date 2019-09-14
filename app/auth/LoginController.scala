@@ -43,4 +43,25 @@ class AuthController @Inject()(
     res.value.map(_.merge)
   }
 
+  def create() = Action.async { request =>
+
+    def requestFilter[T](request: Request[T]): Future[Either[Result, CreateUserForm]] = Future.successful {
+      bindFromRequest(CreateUserForm.form)(request) match {
+        case Right(form) => Right(form)
+        case Left(_) => Left(BadRequest)
+      }
+    }
+
+    def create(form: CreateUserForm): Future[Either[Result, User]] = {
+      userRepository.createUser(form.email, form.rawPassword, form.name).map(Right(_))
+    }
+
+    val res: EitherT[Future, Result, Result] = for {
+      form <- EitherT(requestFilter(request))
+      user <- EitherT(create(form))
+    } yield Ok(CreateUserResponse(user).json)
+    res.value.map(_.merge)
+
+  }
+
 }
