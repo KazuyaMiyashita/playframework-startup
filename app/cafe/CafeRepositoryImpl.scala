@@ -64,10 +64,10 @@ class CafeRepositoryImpl @Inject()(
   override def findAll(): Future[Seq[Cafe]] =
     Future {
       val cafeRecords: Seq[CafeRecord] = withSQL {
-        select.from(CafeRecord as c)
-          .leftJoin(RatingRecord as r).on(c.cafe_id, r.cafe_id)
-          .leftJoin(ImageRecord as i).on(c.cafe_id, i.cafe_id)
-      }
+          select.from(CafeRecord as c)
+            .leftJoin(RatingRecord as r).on(c.cafe_id, r.cafe_id)
+            .leftJoin(ImageRecord as i).on(c.cafe_id, i.cafe_id)
+        }
         .one(CafeRecord(c))
         .toManies(rs => ImageRecord.opt(i)(rs),
             rs => RatingRecord.opt(r)(rs))
@@ -80,11 +80,7 @@ class CafeRepositoryImpl @Inject()(
 
   def mkCafeEntities(cafeRecords: Seq[CafeRecord]): Seq[Cafe] =  {
     cafeRecords.map { cafeRecord =>
-      val averageRating = if (cafeRecord.ratings.isEmpty) {
-        None
-      } else {
-        Some(cafeRecord.ratings.foldLeft(BigDecimal(0))((acc, rating) => acc + (rating.value/cafeRecord.ratings.length)))
-      }
+      val averageRating = cafeRecord.ratings.map(_.value).reduceOption((acc, value) => acc  + (value/cafeRecord.ratings.length))
       val images = cafeRecord.images.map(ir => Image(ir.url))
       Cafe(cafeRecord.cafe_id, cafeRecord.name, Coordinate(cafeRecord.latitude, cafeRecord.longitude), averageRating.map(Rating(_)), images)
     }
