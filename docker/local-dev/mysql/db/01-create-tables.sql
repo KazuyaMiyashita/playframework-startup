@@ -20,7 +20,7 @@ create table if not exists `tokens`
 (
   `token`           char(255) unique not null,
   `auth_id`         bigint unsigned not null,
-  `created_at`      timestamp not null,
+  `created_at`      timestamp not null default current_timestamp on update current_timestamp,
   primary key (`token`),
   foreign key (`auth_id`) references `auths`(`auth_id`)
 );
