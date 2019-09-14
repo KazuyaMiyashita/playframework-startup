@@ -17,4 +17,5 @@ lazy val root = (project in file("."))
     libraryDependencies ++= circe,
     libraryDependencies += mysql,
     libraryDependencies ++= scalikejdbc,
+    libraryDependencies += springSecurityWeb,
   )
