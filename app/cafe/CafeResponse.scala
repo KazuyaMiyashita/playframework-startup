@@ -9,14 +9,13 @@ case class CafeResponse(
 ) {
 
   def json: Json = {
-    import _root_.cafe.models.ImageTypes.MainImage
-    val mainPicOpt = cafe.images.find(_.imageType == MainImage).map(_.url)
+    val mainPicOpt = cafe.images.headOption.map(_.url)
 
     Json.obj(
       "name" -> cafe.name.asJson,
-      "latitude" -> cafe.coodinate.latitude.asJson,
-      "longitude" -> cafe.coodinate.longitude.asJson,
-      "star" -> cafe.rating.value.asJson,
+      "latitude" -> cafe.coordinate.latitude.asJson,
+      "longitude" -> cafe.coordinate.longitude.asJson,
+      "star" -> cafe.rating.map(_.value).asJson,
       "main_pic" -> mainPicOpt.fold(Json.Null)(_.asJson)
     )
   }

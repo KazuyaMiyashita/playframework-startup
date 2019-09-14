@@ -9,8 +9,8 @@ drop table if exists `ratings`;
 create table if not exists `cafes`
 (
   `cafe_id`              bigint unsigned unique not null auto_increment,
-  `lattiude`             decimal(9,6) not null,
-  `longtitude`           decimal(9,6) not null,
+  `latitude`             decimal(9,6) not null,
+  `longitude`           decimal(9,6) not null,
   `name`                 varchar(32) not null,
   primary key (`cafe_id`),
   index (`name`)
