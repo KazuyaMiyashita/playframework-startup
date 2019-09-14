@@ -13,4 +13,5 @@ object Dependencies {
     "org.scalikejdbc" %% "scalikejdbc" % "3.3.5",
     "org.scalikejdbc" %% "scalikejdbc-config"  % "3.3.5",
   )
+  lazy val springSecurityWeb = "org.springframework.security" % "spring-security-web" % "5.1.5.RELEASE"
 }
