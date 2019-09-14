@@ -3,7 +3,7 @@ package cafe.models
 case class Cafe(
   id: Long,
   name: String,
-  coodinate: Coodinate,
-  rating: Rating,
+  coordinate: Coordinate,
+  rating: Option[Rating],
   images: Seq[Image]
 )

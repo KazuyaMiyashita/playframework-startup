@@ -1,6 +1,6 @@
 package cafe.models
 
-case class Coodinate(
+case class Coordinate(
   latitude: BigDecimal,
   longitude: BigDecimal
 )

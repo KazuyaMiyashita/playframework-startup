@@ -14,15 +14,15 @@ class MockCafeRepository @Inject()(
     Cafe(
       id = 1,
       name = "BUoY Cafe",
-      coodinate = Coodinate(BigDecimal("35.7435032"), BigDecimal("139.8000034")),
-      rating = Rating(Some(BigDecimal("4.5"))),
+      coordinate = Coordinate(BigDecimal("35.7435032"), BigDecimal("139.8000034")),
+      rating = Some(Rating(BigDecimal("4.5"))),
       images = Nil
     ) ::
     Cafe(
       id = 2,
       name = "コメダ珈琲店 田端駅前店",
-      coodinate = Coodinate(BigDecimal("35.7380439"), BigDecimal("139.7574194")),
-      rating = Rating(Some(BigDecimal("3.0"))),
+      coordinate = Coordinate(BigDecimal("35.7380439"), BigDecimal("139.7574194")),
+      rating = Some(Rating(BigDecimal("3.0"))),
       images = Nil
     ) :: Nil
   }

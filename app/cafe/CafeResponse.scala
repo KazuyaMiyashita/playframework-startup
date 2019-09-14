@@ -14,9 +14,9 @@ case class CafeResponse(
 
     Json.obj(
       "name" -> cafe.name.asJson,
-      "latitude" -> cafe.coodinate.latitude.asJson,
-      "longitude" -> cafe.coodinate.longitude.asJson,
-      "star" -> cafe.rating.value.asJson,
+      "latitude" -> cafe.coordinate.latitude.asJson,
+      "longitude" -> cafe.coordinate.longitude.asJson,
+      "star" -> cafe.rating.map(_.value).asJson,
       "main_pic" -> mainPicOpt.fold(Json.Null)(_.asJson)
     )
   }
