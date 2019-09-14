@@ -28,7 +28,7 @@ create table if not exists `tokens`
 create table if not exists `users`
 (
   `user_id`          bigint unsigned unique not null auto_increment,
-  `auth_id`          bigint unsigned not null,
+  `auth_id`          bigint unsigned unique not null,
   `name`             varchar(32) not null,
   primary key (`user_id`),
   foreign key (`auth_id`) references `auths`(`auth_id`)
