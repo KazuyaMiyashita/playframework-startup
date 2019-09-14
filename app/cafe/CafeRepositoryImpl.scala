@@ -69,8 +69,8 @@ class CafeRepositoryImpl @Inject()(
             .leftJoin(ImageRecord as i).on(c.cafe_id, i.cafe_id)
         }
         .one(CafeRecord(c))
-        .toManies(rs => ImageRecord.opt(i)(rs),
-            rs => RatingRecord.opt(r)(rs))
+        .toManies(ImageRecord.opt(i),
+            RatingRecord.opt(r))
         .map { (cafe, images, ratings) => cafe.copy(images = images.toSeq, ratings = ratings.toSeq) }
         .list
         .apply()
