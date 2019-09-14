@@ -9,7 +9,6 @@ case class CafeResponse(
 ) {
 
   def json: Json = {
-    import _root_.cafe.models.ImageTypes.MainImage
     val mainPicOpt = cafe.images.headOption.map(_.url)
 
     Json.obj(
