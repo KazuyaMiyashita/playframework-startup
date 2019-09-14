@@ -16,8 +16,18 @@ class UserRepositoryImpl @Inject()(
   val tokenExpirationDuration = 1.day
 
   private val bcrypt = new BCryptPasswordEncoder()
+  private def createHash(password: String): String = bcrypt.encode(password)
   private def authenticate(rawPassword: String, hashedPassword: String): Boolean =
     bcrypt.matches(rawPassword, hashedPassword)
+
+  def createUser(email: String, rawPassword: String, name: String): Future[User] = Future {
+    val hashedPassword = createHash(rawPassword)
+    val authId: Long = sql"insert into auths (email, password) values (${email}, ${hashedPassword})"
+      .updateAndReturnGeneratedKey.apply()
+    val userId: Long = sql"insert into users (auth_id, name) values (${authId}, ${name})"
+      .updateAndReturnGeneratedKey.apply()
+    User(userId, name)
+  }
 
   def login(email: String, rawPassword: String): Future[Option[Token]] = {
 
