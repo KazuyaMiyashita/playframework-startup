@@ -1,4 +1,4 @@
-package models
+package cafe.models
 
 case class Rating(
   value: BigDecimal

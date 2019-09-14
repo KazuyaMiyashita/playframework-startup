@@ -6,3 +6,5 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 GET     /health                     controllers.HealthController.check
+
+GET     /cafes                      cafe.CafeController.all

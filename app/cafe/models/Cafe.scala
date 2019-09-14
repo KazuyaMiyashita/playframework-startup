@@ -1,7 +1,7 @@
-package models
+package cafe.models
 
-case class CafeId(value: Long)
 case class Cafe(
+  id: Long,
   name: String,
   coodinate: Coodinate,
   rating: Rating,

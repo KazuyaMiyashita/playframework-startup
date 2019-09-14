@@ -13,6 +13,8 @@ lazy val root = (project in file("."))
     name := "playframework-startup",
     libraryDependencies += guice,
     libraryDependencies += scalaTestPlusPlay % Test,
+    libraryDependencies += cats,
+    libraryDependencies ++= circe,
     libraryDependencies += mysql,
     libraryDependencies ++= scalikejdbc,
   )
