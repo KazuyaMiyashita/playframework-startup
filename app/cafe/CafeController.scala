@@ -21,5 +21,12 @@ class CafeController @Inject()(
 
   }
 
+  def findById(id: Long) = Action.async { request =>
+    cafeRepository.findById(id).map {
+      case Some(cafe) => Ok(CafeResponse(cafe).json)
+      case None => NotFound
+    }
+  }
+
 
 }
