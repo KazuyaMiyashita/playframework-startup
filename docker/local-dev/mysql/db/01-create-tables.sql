@@ -11,7 +11,7 @@ create table if not exists `auths`
 (
   `auth_id`         bigint unsigned not null auto_increment,
   `email`           char(255) unique not null,
-  `password`        char(60) not null,
+  `hashed_password`        char(60) not null,
   primary key (`auth_id`),
   index (`email`)
 );
