@@ -8,3 +8,4 @@ GET     /                           controllers.HomeController.index
 GET     /health                     controllers.HealthController.check
 
 GET     /cafes                      cafe.CafeController.all
+GET     /cafe/:id                  cafe.CafeController.findById(id: Long)
