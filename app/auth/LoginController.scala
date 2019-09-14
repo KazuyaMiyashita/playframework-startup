@@ -28,26 +28,19 @@ class AuthController @Inject()(
     }
 
     def login(form: LoginForm): Future[Either[Result, Result]] = {
-      val et: EitherT[Future, Result, Result] = 
-        EitherT.fromOptionF(
-          userRepository.login(form.email, form.rawPassword),
-          BadRequest
-        ).flatMap { token =>
-          Right(Ok(TokenResponse(token).json))
+      userRepository.login(form.email, form.rawPassword).map { tokenOpt =>
+        tokenOpt match {
+          case None => Left(BadRequest)
+          case Some(token) => Right(Ok(TokenResponse(token).json))
         }
-      // val et: EitherT[Future, Result, Result] =
-      //   EitherT.fromOption(userRepository.login(form.email, form.rawPassword)).flatMap({ _ match {
-      //   case Some(token) => Right(Ok(TokenResponse(token).json))
-      //   case None => Left(BadRequest)
-      // }})
-      et.value
+      }
     }
 
-    val ec: EitherT[Future, Result, Result] = for {
+    val res: EitherT[Future, Result, Result] = for {
       form <- EitherT(requestFilter(request))
       token <- EitherT(login(form))
     } yield token
-    ec.value
+    res.value.map(_.merge)
   }
 
 }
