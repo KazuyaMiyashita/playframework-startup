@@ -7,4 +7,8 @@
 GET     /                           controllers.HomeController.index
 GET     /health                     controllers.HealthController.check
 
+POST    /auth/login                 auth.AuthController.login
+POST    /auth/create                auth.AuthController.create
+
 GET     /cafes                      cafe.CafeController.all
+
