@@ -1,7 +1,7 @@
 package cafe.models
 
 case class Rating(
-  value: BigDecimal
+  value: Option[BigDecimal]
 )
 
 object Rating {

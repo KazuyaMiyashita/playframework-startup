@@ -1,7 +1,6 @@
 package cafe.models
 
 case class Image(
-  imageType: ImageType,
   url: String
 )
 
