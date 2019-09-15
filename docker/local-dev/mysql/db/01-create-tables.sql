@@ -9,28 +9,27 @@ drop table if exists `users`;
 # create
 create table if not exists `auths`
 (
-  `id`              char(64) unique not null,
+  `auth_id`         bigint unsigned not null auto_increment,
   `email`           char(255) unique not null,
-  `password`        char(60) not null,
-  primary key (`id`),
+  `hashed_password`        char(60) not null,
+  primary key (`auth_id`),
   index (`email`)
 );
 
 create table if not exists `tokens`
 (
   `token`           char(255) unique not null,
-  `auth_id`         char(255) not null,
-  `created_at`      timestamp not null,
+  `auth_id`         bigint unsigned not null,
+  `created_at`      timestamp not null default current_timestamp on update current_timestamp,
   primary key (`token`),
-  foreign key (`auth_id`) references `auths`(`id`)
+  foreign key (`auth_id`) references `auths`(`auth_id`)
 );
-
 
 create table if not exists `users`
 (
-  `id`               char(64) unique not null,
-  `auth_id`          char(64) unique not null,
-  `name`             VARCHAR(32) NOT NULL,
-  primary key (`id`),
-  foreign key (`auth_id`) references `auths`(`id`)
+  `user_id`          bigint unsigned unique not null auto_increment,
+  `auth_id`          bigint unsigned unique not null,
+  `name`             varchar(32) not null,
+  primary key (`user_id`),
+  foreign key (`auth_id`) references `auths`(`auth_id`)
 );

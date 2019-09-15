@@ -6,3 +6,9 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 GET     /health                     controllers.HealthController.check
+
+POST    /auth/login                 auth.LoginController.login
+POST    /auth/create                auth.CreateUserController.create
+
+GET     /cafes                      cafe.CafeController.all
+GET     /cafe/:id                   cafe.CafeController.findById(id: Long)
