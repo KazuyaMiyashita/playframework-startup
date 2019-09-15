@@ -28,5 +28,8 @@ class CafeController @Inject()(
     }
   }
 
+  def add() = Action.async { request =>
+    ???
+  }
 
 }

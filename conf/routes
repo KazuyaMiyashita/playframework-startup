@@ -12,3 +12,4 @@ POST    /auth/create                auth.CreateUserController.create
 
 GET     /cafes                      cafe.CafeController.all
 GET     /cafe/:id                   cafe.CafeController.findById(id: Long)
+POST    /cafes                      cafe.CafeController.add

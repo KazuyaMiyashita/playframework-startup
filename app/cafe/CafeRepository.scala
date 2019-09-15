@@ -7,5 +7,6 @@ trait CafeRepository {
 
   def findAll(): Future[Seq[Cafe]]
   def findById(id: Long): Future[Option[Cafe]]
+  def add(): Future[Option[Cafe]]
 
 }
