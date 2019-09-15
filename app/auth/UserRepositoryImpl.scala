@@ -22,7 +22,7 @@ class UserRepositoryImpl @Inject()(
 
   def createUser(email: String, rawPassword: String, name: String): Future[User] = Future {
     val hashedPassword = createHash(rawPassword)
-    val authId: Long = sql"insert into auths (email, password) values (${email}, ${hashedPassword})"
+    val authId: Long = sql"insert into auths (email, hashed_password) values (${email}, ${hashedPassword})"
       .updateAndReturnGeneratedKey.apply()
     val userId: Long = sql"insert into users (auth_id, name) values (${authId}, ${name})"
       .updateAndReturnGeneratedKey.apply()
@@ -60,7 +60,7 @@ class UserRepositoryImpl @Inject()(
         Token("Bearer " + List.fill(length)(ts(rnd.nextInt(tsLen))).mkString)
       }
       val token = createRandomToken()
-      sql"insert into tokens (token, auth_id) values (${token}, ${auth.authId})"
+      sql"insert into tokens (token, auth_id) values (${token.value}, ${auth.authId})"
         .update.apply()
 
       token
