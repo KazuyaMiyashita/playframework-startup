@@ -1,5 +1,6 @@
 package auth
 
+import auth.entity.User
 import io.circe.Json
 import io.circe.syntax._
 

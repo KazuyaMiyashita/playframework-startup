@@ -1,6 +1,7 @@
 package auth
 
 import javax.inject.{Singleton, Inject}
+import auth.entity.{User, Token}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import scalikejdbc._
@@ -8,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import scala.concurrent.duration._
 
 @Singleton
-class UserRepositoryImpl @Inject()(
+private class UserRepositoryImpl @Inject()(
   implicit ec: ExecutionContext
 ) extends UserRepository {
 
