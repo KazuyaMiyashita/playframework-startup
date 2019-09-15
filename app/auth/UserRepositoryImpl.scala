@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import scala.concurrent.duration._
 
 @Singleton
-private class UserRepositoryImpl @Inject()(
+class UserRepositoryImpl @Inject()(
   implicit ec: ExecutionContext
 ) extends UserRepository {
 
