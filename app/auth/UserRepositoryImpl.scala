@@ -1,6 +1,7 @@
 package auth
 
 import javax.inject.{Singleton, Inject}
+import auth.entity.{User, Token}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import scalikejdbc._
@@ -8,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import scala.concurrent.duration._
 
 @Singleton
-class UserRepositoryImpl @Inject()(
+private class UserRepositoryImpl @Inject()(
   implicit ec: ExecutionContext
 ) extends UserRepository {
 
@@ -22,7 +23,7 @@ class UserRepositoryImpl @Inject()(
 
   def createUser(email: String, rawPassword: String, name: String): Future[User] = Future {
     val hashedPassword = createHash(rawPassword)
-    val authId: Long = sql"insert into auths (email, password) values (${email}, ${hashedPassword})"
+    val authId: Long = sql"insert into auths (email, hashed_password) values (${email}, ${hashedPassword})"
       .updateAndReturnGeneratedKey.apply()
     val userId: Long = sql"insert into users (auth_id, name) values (${authId}, ${name})"
       .updateAndReturnGeneratedKey.apply()
@@ -60,7 +61,7 @@ class UserRepositoryImpl @Inject()(
         Token("Bearer " + List.fill(length)(ts(rnd.nextInt(tsLen))).mkString)
       }
       val token = createRandomToken()
-      sql"insert into tokens (token, auth_id) values (${token}, ${auth.authId})"
+      sql"insert into tokens (token, auth_id) values (${token.value}, ${auth.authId})"
         .update.apply()
 
       token

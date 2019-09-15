@@ -1,5 +1,6 @@
 package auth
 
+import auth.entity.{User, Token}
 import scala.concurrent.Future
 
 trait UserRepository {

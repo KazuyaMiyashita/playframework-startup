@@ -8,7 +8,7 @@ import cats.data.EitherT
 import cats.implicits._
 
 @Singleton
-class UserRefinerImpl @Inject()(
+private class UserRefinerImpl @Inject()(
   implicit ec: ExecutionContext,
   userRepository: UserRepository
 ) extends UserRefiner(ec) {
