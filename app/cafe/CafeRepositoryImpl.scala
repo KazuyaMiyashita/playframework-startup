@@ -24,6 +24,7 @@ case class ImageRecord(
 
 case class RatingRecord(
   cafe_id: Long,
+  user_id: Long,
   value: BigDecimal
 )
 
@@ -47,7 +48,7 @@ object RatingRecord extends SQLSyntaxSupport[RatingRecord] {
   override val tableName = "ratings"
   def apply(r: SyntaxProvider[RatingRecord])(rs: WrappedResultSet): RatingRecord = apply(r.resultName)(rs)
   def apply(r: ResultName[RatingRecord])(rs: WrappedResultSet): RatingRecord =
-    RatingRecord(rs.get(r.cafe_id), rs.get(r.value))
+    RatingRecord(rs.get(r.cafe_id), rs.get(r.user_id), rs.get(r.value))
 
   def opt(m: SyntaxProvider[RatingRecord])(rs: WrappedResultSet): Option[RatingRecord] =
     rs.stringOpt(m.resultName.value).map(_ => RatingRecord(m)(rs))
@@ -85,5 +86,53 @@ class CafeRepositoryImpl @Inject()(
 
 
   override def findById(id: Long): Future[Option[Cafe]] = findAll.map(_.find(_.id == id))
+
+  override def add(form: CafeAddForm, userId: Long): Future[Option[Cafe]] = {
+
+    def insertIntoCafes(form: CafeAddForm)(implicit session: AutoSession) = {
+      withSQL {
+        insert.into(CafeRecord).namedValues(
+          c.name -> form.name,
+          c.latitude -> form.latitude,
+          c.longitude -> form.longitude,
+        )
+      }.updateAndReturnGeneratedKey.apply()
+    }
+    def insertIntoRatings(cafeId: Long, userId: Long, value: BigDecimal)(implicit session: AutoSession) = {
+      withSQL {
+        insert.into(RatingRecord).namedValues(
+          r.cafe_id -> cafeId,
+          r.user_id -> userId,
+          r.value -> value,
+        )
+      }.update.apply()
+    }
+    def insertIntoImages(cafeId: Long, imageUrls: Seq[String])(implicit session: AutoSession) = {
+      val batchParams: Seq[Seq[Any]] = imageUrls.map(u => cafeId :: u :: Nil)
+      withSQL {
+        insert.into(ImageRecord).namedValues(
+          i.cafe_id -> sqls.?,
+          i.url -> sqls.?,
+        )
+      }.batch(batchParams: _*).apply()
+    }
+
+    def insertCafe() = Future {
+      val cafeId = insertIntoCafes(form)
+      form.ratingOpt.foreach { rating =>
+        insertIntoRatings(cafeId, userId, rating)
+      }
+      if (form.images.nonEmpty) {
+        insertIntoImages(cafeId, form.images)
+      }
+      cafeId
+    }
+
+    for {
+      cafeId <- insertCafe()
+      cafeOpt <- findById(cafeId)
+    } yield cafeOpt
+
+  }
 
 }
