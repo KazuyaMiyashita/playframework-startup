@@ -89,8 +89,6 @@ class CafeRepositoryImpl @Inject()(
 
   override def add(form: CafeAddForm, userId: Long): Future[Option[Cafe]] = {
 
-    println(form)
-
     def insertIntoCafes(form: CafeAddForm)(implicit session: AutoSession) = {
       withSQL {
         insert.into(CafeRecord).namedValues(
