@@ -29,6 +29,6 @@ class MockCafeRepository @Inject()(
 
   override def findById(id: Long): Future[Option[Cafe]] = findAll.map(_.find(_.id == id))
 
-  override def add(form: CafeAddForm): Future[Option[Cafe]] = ???
+  override def add(form: CafeAddForm, userId: Long): Future[Option[Cafe]] = ???
   
 }
