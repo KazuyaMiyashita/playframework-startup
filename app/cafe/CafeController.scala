@@ -2,6 +2,11 @@ package cafe
 
 import javax.inject.{Singleton, Inject}
 import play.api.mvc._
+import models.Cafe
+import utils.FormUtils.bindFromRequest
+import scala.concurrent.Future
+import cats.data.EitherT
+import cats.implicits._
 
 import utils.CirceWritable._
 
@@ -29,7 +34,28 @@ class CafeController @Inject()(
   }
 
   def add() = Action.async { request =>
-    ???
+
+    def requestFilter[T](request: Request[T]): Future[Either[Result, CafeAddForm]] = Future.successful {
+      bindFromRequest(CafeAddForm.form)(request) match {
+        case Right(form) => Right(form)
+        case Left(_) => Left(BadRequest)
+      }
+    }
+
+    def insertCafe(form: CafeAddForm): Future[Either[Result, Cafe]] = {
+      cafeRepository.add(form).map { cafeOpt =>
+        cafeOpt match {
+          case None => Left(InternalServerError)
+          case Some(cafe) => Right(cafe)
+        }
+      }
+    }
+
+    val res: EitherT[Future, Result, Result] = for {
+      form <- EitherT(requestFilter(request))
+      cafe <- EitherT(insertCafe(form))
+    } yield Ok(CafeResponse(cafe).json)
+    res.value.map(_.merge)
   }
 
 }
