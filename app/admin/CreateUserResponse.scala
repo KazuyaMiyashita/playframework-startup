@@ -1,4 +1,4 @@
-package auth
+package admin
 
 import auth.entity.User
 import io.circe.Json

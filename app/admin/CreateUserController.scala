@@ -1,4 +1,4 @@
-package auth
+package admin
 
 import javax.inject.{Singleton, Inject}
 import play.api.mvc._
@@ -14,12 +14,13 @@ import utils.CirceWritable._
 @Singleton
 class CreateUserController @Inject()(
   cc: ControllerComponents,
-  userRepository: UserRepository,
+  adminRefiner: AdminRefiner,
+  adminRepository: AdminRepository,
 ) extends AbstractController(cc) {
 
   implicit val ec = cc.executionContext
 
-  def create() = Action.async { request =>
+  def create() = cc.actionBuilder.andThen(adminRefiner).async { request =>
 
     def requestFilter[T](request: Request[T]): Future[Either[Result, CreateUserForm]] = Future.successful {
       bindFromRequest(CreateUserForm.form)(request) match {
@@ -29,7 +30,7 @@ class CreateUserController @Inject()(
     }
 
     def create(form: CreateUserForm): Future[Either[Result, User]] = {
-      userRepository.createUser(form.email, form.rawPassword, form.name).map(Right(_))
+      adminRepository.createUser(form.email, form.rawPassword, form.name).map(Right(_))
     }
 
     val res: EitherT[Future, Result, Result] = for {
