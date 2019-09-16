@@ -86,6 +86,50 @@ class CafeRepositoryImpl @Inject()(
 
   override def findById(id: Long): Future[Option[Cafe]] = findAll.map(_.find(_.id == id))
 
-  override def add(): Future[Option[Cafe]] = ???
+  override def add(form: CafeAddForm): Future[Option[Cafe]] = {
+
+    def insertIntoCafes(form: CafeAddForm)(implicit session: AutoSession) = {
+      withSQL {
+        insert.into(CafeRecord).namedValues(
+          c.name -> form.name,
+          c.latitude -> form.latitude,
+          c.longitude -> form.longitude,
+        )
+      }.updateAndReturnGeneratedKey.apply()
+    }
+    def insertIntoRatings(cafeId: Long, value: BigDecimal)(implicit session: AutoSession) = {
+      withSQL {
+        insert.into(RatingRecord).namedValues(
+          r.cafe_id -> cafeId,
+          r.value -> value,
+        )
+      }.updateAndReturnGeneratedKey.apply()
+    }
+    def insertIntoImages(cafeId: Long, imageUrls: Seq[String])(implicit session: AutoSession) = {
+      withSQL {
+        insert.into(ImageRecord).namedValues(
+          i.cafe_id -> cafeId,
+          i.url -> sqls.?,
+        )
+      }.batch(imageUrls).apply()
+    }
+
+    def insertCafe() = Future {
+      val cafeId = insertIntoCafes(form)
+      form.ratingOpt.foreach { rating =>
+        insertIntoRatings(cafeId, rating)
+      }
+      if (form.images.nonEmpty) {
+        insertIntoImages(cafeId, form.images)
+      }
+      cafeId
+    }
+
+    for {
+      cafeId <- insertCafe()
+      cafeOpt <- findById(cafeId)
+    } yield cafeOpt
+
+  }
 
 }
