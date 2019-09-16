@@ -3,17 +3,27 @@ use `playframework-startup`;
 
 # drop
 drop table if exists `auths`;
+drop table if exists `roles`;
 drop table if exists `tokens`;
 drop table if exists `users`;
 
 # create
+create table if not exists `roles`
+(
+  `role_id`         bigint unsigned not null,
+  `value`           char(32) not null,
+  primary key (`role_id`)
+);
+
 create table if not exists `auths`
 (
   `auth_id`         bigint unsigned not null auto_increment,
   `email`           char(255) unique not null,
   `hashed_password`        char(60) not null,
+  `role_id`         bigint unsigned not null,
   primary key (`auth_id`),
-  index (`email`)
+  index (`email`),
+  foreign key (`role_id`) references `roles`(`role_id`)
 );
 
 create table if not exists `tokens`
