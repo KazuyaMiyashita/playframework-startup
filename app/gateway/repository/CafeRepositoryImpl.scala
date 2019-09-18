@@ -1,4 +1,4 @@
-package cafe
+package gateway.repository
 
 import cafe.models.{Cafe, Coordinate, Image, Rating}
 import javax.inject.{Inject, Singleton}

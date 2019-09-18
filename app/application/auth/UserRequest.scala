@@ -1,4 +1,4 @@
-package auth
+package application.auth
 
 import play.api.mvc.{Request, WrappedRequest}
 import auth.entity.User

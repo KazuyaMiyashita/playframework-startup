@@ -1,4 +1,4 @@
-package cafe
+package gateway.repository
 
 import javax.inject.{Singleton, Inject}
 import scala.concurrent.Future

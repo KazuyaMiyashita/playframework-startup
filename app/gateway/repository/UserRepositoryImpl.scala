@@ -1,4 +1,4 @@
-package auth
+package gateway.repository
 
 import javax.inject.{Singleton, Inject}
 import auth.entity.{User, Token}

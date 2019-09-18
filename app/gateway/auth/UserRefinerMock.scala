@@ -1,4 +1,4 @@
-package auth
+package gateawy.auth
 
 import javax.inject.{Singleton, Inject}
 import play.api.mvc.{Request, Result}

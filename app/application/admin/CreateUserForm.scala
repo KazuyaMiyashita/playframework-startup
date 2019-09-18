@@ -1,4 +1,4 @@
-package admin
+package application.admin
 
 import play.api.data.Form
 import play.api.data.Forms._

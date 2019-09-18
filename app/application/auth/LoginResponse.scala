@@ -1,4 +1,4 @@
-package auth
+package application.auth
 
 import auth.entity.Token
 import io.circe.Json

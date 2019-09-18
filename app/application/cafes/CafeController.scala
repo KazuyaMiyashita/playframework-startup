@@ -1,21 +1,23 @@
-package cafe
+package application.cafe
 
 import javax.inject.{Singleton, Inject}
 import play.api.mvc._
-import models.Cafe
-import auth.UserRefiner
-import utils.FormUtils.bindFromRequest
+import domain.cafe.CafeRepository
+import domain.cafe.CafeAddForm
+import domain.cafe.models.Cafe
+import application.auth.UserRefiner
+import application.utils.FormUtils.bindFromRequest
 import scala.concurrent.Future
 import cats.data.EitherT
 import cats.implicits._
 
-import utils.CirceWritable._
+import application.utils.CirceWritable._
 
 @Singleton
 class CafeController @Inject()(
   cc: ControllerComponents,
   userRefiner: UserRefiner,
-  cafeRepository: CafeRepository,
+  cafeRepository: CafeRepository[Future],
 ) extends AbstractController(cc) {
 
   implicit val ec = cc.executionContext

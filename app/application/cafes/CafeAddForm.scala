@@ -1,16 +1,10 @@
-package cafe
+package application.cafe
 
-import cafe.models._
+import domain.cafe.CafeAddForm
+import domain.cafe.models.Coordinate
+import domain.cafe.models.Rating
 import play.api.data.Form
 import play.api.data.Forms._
-
-case class CafeAddForm(
-  name: String,
-  latitude: BigDecimal,
-  longitude: BigDecimal,
-  ratingOpt: Option[BigDecimal],
-  images: Seq[String]
-)
 
 object CafeAddForm {
 

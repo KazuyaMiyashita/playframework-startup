@@ -1,12 +1,20 @@
-package cafe
+package domain.cafe
 
-import models.Cafe
-import scala.concurrent.Future
+import scala.language.higherKinds
+import domain.cafe.models.Cafe
 
-trait CafeRepository {
+trait CafeRepository[F[_]] {
 
-  def findAll(): Future[Seq[Cafe]]
-  def findById(id: Long): Future[Option[Cafe]]
-  def add(form: CafeAddForm, userId: Long): Future[Option[Cafe]]
+  def findAll(): F[Seq[Cafe]]
+  def findById(id: Long): F[Option[Cafe]]
+  def add(form: CafeAddForm, userId: Long): F[Option[Cafe]]
 
 }
+
+case class CafeAddForm(
+  name: String,
+  latitude: BigDecimal,
+  longitude: BigDecimal,
+  ratingOpt: Option[BigDecimal],
+  images: Seq[String]
+)

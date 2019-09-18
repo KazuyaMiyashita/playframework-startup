@@ -1,4 +1,4 @@
-package admin
+package application.auth
 
 import javax.inject.Inject
 import play.api.mvc.{Request, Result, ActionRefiner}

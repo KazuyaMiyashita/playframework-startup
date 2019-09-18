@@ -1,6 +1,6 @@
-package cafe
+package application.cafe
 
-import cafe.models._
+import domain.cafe.models._
 import io.circe.Json
 import io.circe.syntax._
 

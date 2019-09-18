@@ -1,4 +1,4 @@
-package utils
+package application.utils
 
 import play.api.http.{ContentTypeOf, Writeable}
 import akka.util.ByteString

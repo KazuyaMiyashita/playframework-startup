@@ -1,4 +1,4 @@
-package admin
+package application.auth
 
 import javax.inject.{Singleton, Inject}
 import play.api.mvc._
