@@ -2,10 +2,11 @@ package application.cafe
 
 import javax.inject.{Singleton, Inject}
 import play.api.mvc._
+import domain.auth.entity.UserId
 import domain.cafe.CafeRepository
 import domain.cafe.CafeAddForm
 import domain.cafe.models.Cafe
-import application.auth.UserRefiner
+import application.auth.AuthorizedUserAction
 import application.utils.FormUtils.bindFromRequest
 import scala.concurrent.Future
 import cats.data.EitherT
@@ -16,7 +17,7 @@ import application.utils.CirceWritable._
 @Singleton
 class CafeController @Inject()(
   cc: ControllerComponents,
-  userRefiner: UserRefiner,
+  authorizedUserAction: AuthorizedUserAction,
   cafeRepository: CafeRepository[Future],
 ) extends AbstractController(cc) {
 
@@ -37,18 +38,18 @@ class CafeController @Inject()(
     }
   }
 
-  def add() = Action.andThen(userRefiner).async { request =>
+  def add() = Action.andThen(authorizedUserAction).async { request =>
 
-    val userId = request.user.id
+    val userId = request.userId
 
     def requestFilter[T](request: Request[T]): Future[Either[Result, CafeAddForm]] = Future.successful {
-      bindFromRequest(CafeAddForm.form)(request) match {
+      bindFromRequest(CafeAddRequest.handler)(request) match {
         case Right(form) => Right(form)
         case Left(_) => Left(BadRequest)
       }
     }
 
-    def insertCafe(form: CafeAddForm, userId: Long): Future[Either[Result, Cafe]] = {
+    def insertCafe(form: CafeAddForm, userId: UserId): Future[Either[Result, Cafe]] = {
       cafeRepository.add(form, userId).map { cafeOpt =>
         cafeOpt match {
           case None => Left(InternalServerError)

@@ -6,9 +6,9 @@ import domain.cafe.models.Rating
 import play.api.data.Form
 import play.api.data.Forms._
 
-object CafeAddForm {
+object CafeAddRequest {
 
-  val form: Form[CafeAddForm] = Form(
+  val handler: Form[CafeAddForm] = Form(
     mapping(
       "name" -> nonEmptyText(maxLength = 32),
       "latitude" -> bigDecimal
