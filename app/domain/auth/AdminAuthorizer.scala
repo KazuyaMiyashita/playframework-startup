@@ -8,6 +8,6 @@ trait AdminAuthorizer[F[_]] {
 
   def login(): F[Either[LoginError, AdminToken]]
   def logout(token: AdminToken): F[Either[TokenError, Unit]]
-  def authorize(token: AdminToken): F[Either[TokenError, Admin]]
+  def authorize(token: AdminToken): F[Either[TokenError, AdminId]]
 
 }

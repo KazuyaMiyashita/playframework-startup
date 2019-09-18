@@ -8,6 +8,6 @@ trait UserAuthorizer[F[_]] {
 
   def login(): F[Either[LoginError, UserToken]]
   def logout(token: UserToken): F[Either[TokenError, Unit]]
-  def authorize(token: UserToken): F[Either[TokenError, User]]
+  def authorize(token: UserToken): F[Either[TokenError, UserId]]
 
 }

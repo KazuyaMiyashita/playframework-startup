@@ -1,6 +1,6 @@
 package domain.auth.entity
 
 case class Admin(
-  id: Long,
+  id: AdminId,
   name: String
 )
