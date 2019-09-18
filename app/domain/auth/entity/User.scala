@@ -1,4 +1,4 @@
-package auth.entity
+package domain.auth.entity
 
 case class User(
   id: Long,
