@@ -10,7 +10,7 @@ scalacOptions in (Compile, console) ~= {_.filterNot(_ == "-Xlint")}
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(
-    name := "playframework-startup",
+    name := "cafe-backend",
     libraryDependencies += guice,
     libraryDependencies += scalaTestPlusPlay % Test,
     libraryDependencies += cats,
