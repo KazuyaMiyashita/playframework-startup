@@ -8,16 +8,25 @@ import scalikejdbc._
 
 import scala.concurrent.ExecutionContext
 
-case class CafeRecord(cafe_id: Long,
-                      name: String,
-                      latitude: BigDecimal,
-                      longitude: BigDecimal,
-                      ratings: Seq[RatingRecord] = Nil,
-                      images: Seq[ImageRecord] = Nil)
+case class CafeRecord(
+  cafe_id: Long,
+  name: String,
+  latitude: BigDecimal,
+  longitude: BigDecimal,
+  ratings: Seq[RatingRecord] = Nil,
+  images: Seq[ImageRecord] = Nil
+)
 
-case class ImageRecord(cafe_id: Long, url: String)
+case class ImageRecord(
+  cafe_id: Long,
+  url: String
+)
 
-case class RatingRecord(cafe_id: Long, user_id: Long, value: BigDecimal)
+case class RatingRecord(
+  cafe_id: Long,
+  user_id: Long,
+  value: BigDecimal
+)
 
 object CafeRecord extends SQLSyntaxSupport[CafeRecord] {
   override val tableName = "cafes"
@@ -82,13 +91,6 @@ class CafeRepositoryImpl @Inject()(implicit ec: ExecutionContext)
         cafe.copy(images = images.toSeq, ratings = ratings.toSeq)
       }
 
-  override def findAll(): Future[Seq[Cafe]] =
-    Future {
-      buildCafeSql(baseSqlBuildeer).list
-        .apply()
-        .map(mkCafeEntity)
-    }
-
   def mkCafeEntity(cafeRecord: CafeRecord): Cafe = {
     val averageRating = cafeRecord.ratings
       .map(_.value)
@@ -103,6 +105,13 @@ class CafeRepositoryImpl @Inject()(implicit ec: ExecutionContext)
     )
   }
 
+  override def findAll(): Future[Seq[Cafe]] =
+    Future {
+      buildCafeSql(baseSqlBuildeer).list
+        .apply()
+        .map(mkCafeEntity)
+    }
+
   override def findById(id: Long): Future[Option[Cafe]] =
     Future {
       buildCafeSql(baseSqlBuildeer.where.eq(c.cafe_id, id)).single
@@ -111,7 +120,6 @@ class CafeRepositoryImpl @Inject()(implicit ec: ExecutionContext)
     }
 
   override def add(form: CafeAddForm, userId: Long): Future[Option[Cafe]] = {
-
     def insertIntoCafes(form: CafeAddForm)(implicit session: AutoSession) = {
       withSQL {
         insert
