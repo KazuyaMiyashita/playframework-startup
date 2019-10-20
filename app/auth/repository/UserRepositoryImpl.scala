@@ -1,20 +1,17 @@
 package auth.repository
 
 import auth.domain.entities.{Token, User}
-import cats.Monad
 import javax.inject.{Inject, Singleton}
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import scalikejdbc._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 import scala.concurrent.duration._
 
-import scala.language.higherKinds
-
 @Singleton
-class UserRepositoryImpl[F[_]: Monad] @Inject()(
+class UserRepositoryImpl @Inject()(
     implicit ec: ExecutionContext
-) extends UserRepository[F] {
+) extends UserRepository[Future] {
 
   implicit val session        = AutoSession
   val tokenExpirationDuration = 1.day
@@ -24,7 +21,7 @@ class UserRepositoryImpl[F[_]: Monad] @Inject()(
   private def authenticate(rawPassword: String, hashedPassword: String): Boolean =
     bcrypt.matches(rawPassword, hashedPassword)
 
-  override def createUser(email: String, rawPassword: String, name: String): F[User] = Monad[F].pure {
+  override def createUser(email: String, rawPassword: String, name: String): Future[User] = Future.successful {
     val hashedPassword = createHash(rawPassword)
     val authId: Long =
       sql"insert into auths (email, hashed_password) values (${email}, ${hashedPassword})".updateAndReturnGeneratedKey
@@ -34,7 +31,7 @@ class UserRepositoryImpl[F[_]: Monad] @Inject()(
     User(userId, name)
   }
 
-  override def login(email: String, rawPassword: String): F[Option[Token]] = {
+  override def login(email: String, rawPassword: String): Future[Option[Token]] = {
 
     case class Auth(authId: Long, hashedPassword: String)
     def findPasswordFromEmail(email: String): Option[Auth] = {
@@ -70,7 +67,7 @@ class UserRepositoryImpl[F[_]: Monad] @Inject()(
       token
     }
 
-    Monad[F].pure {
+    Future {
       for {
         auth <- findPasswordFromEmail(email) if authenticate(rawPassword, auth.hashedPassword)
         token = saveToken(auth)
@@ -78,13 +75,13 @@ class UserRepositoryImpl[F[_]: Monad] @Inject()(
     }
   }
 
-  override def findByToken(token: String): F[Option[User]] = {
+  override def findByToken(token: String): Future[Option[User]] = {
     def mkUserEntity(rs: WrappedResultSet) = User(
       id = rs.get("user_id"),
       name = rs.get("name")
     )
 
-    Monad[F].pure {
+    Future {
       sql"""
         select u.user_id as user_id, u.name as name
           from tokens as t
