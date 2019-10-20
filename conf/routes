@@ -4,14 +4,14 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-GET     /health                     controllers.HealthController.check
+GET     /                           application.others.HomeController.index
+GET     /health                     application.others.HealthController.check
 
-POST    /admin/login                admin.AdminLoginController.login
-POST    /admin/users                admin.CreateUserController.create
+POST    /admin/login                application.admin.AdminLoginController.login
+POST    /admin/users                application.admin.CreateUserController.create
 
-POST    /auth/login                 auth.LoginController.login
+POST    /auth/login                 application.auth.LoginController.login
 
-GET     /cafes                      cafe.CafeController.all
-GET     /cafe/:id                   cafe.CafeController.findById(id: Long)
-POST    /cafes                      cafe.CafeController.add
+GET     /cafes                      application.cafe.CafeController.all
+GET     /cafe/:id                   application.cafe.CafeController.findById(id: Long)
+POST    /cafes                      application.cafe.CafeController.add
