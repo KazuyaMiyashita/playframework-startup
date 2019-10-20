@@ -5,11 +5,11 @@ import play.api.data.Form
 import play.api.data.Forms._
 
 case class CafeAddForm(
-  name: String,
-  latitude: BigDecimal,
-  longitude: BigDecimal,
-  ratingOpt: Option[BigDecimal],
-  images: Seq[String]
+    name: String,
+    latitude: BigDecimal,
+    longitude: BigDecimal,
+    ratingOpt: Option[BigDecimal],
+    images: Seq[String]
 )
 
 object CafeAddForm {

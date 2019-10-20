@@ -1,6 +1,6 @@
 package auth.driver
 
-import auth.controller.UserRequest
+import auth.driver.UserRequest
 import play.api.mvc.{ActionRefiner, Request, Result}
 
 import scala.concurrent.{ExecutionContext, Future}

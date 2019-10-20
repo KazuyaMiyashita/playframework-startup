@@ -1,6 +1,6 @@
 package auth.driver
 
-import auth.controller.UserRequest
+import auth.driver.UserRequest
 import auth.repository.UserRepository
 import cats.data.EitherT
 import cats.implicits._
@@ -10,9 +10,9 @@ import play.api.mvc.{Request, Result, Results}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserRefinerImpl @Inject()(userRepository: UserRepository[Future])(
-    override implicit protected val executionContext: ExecutionContext)
-    extends UserRefiner {
+class UserRefinerImpl @Inject() (userRepository: UserRepository[Future])(
+    override implicit protected val executionContext: ExecutionContext
+) extends UserRefiner {
   override protected def refine[A](request: Request[A]): Future[Either[Result, UserRequest[A]]] = {
 
     def requestFilter(): Future[Either[Result, String]] = Future.successful {

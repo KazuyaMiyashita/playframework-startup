@@ -9,7 +9,7 @@ import scala.concurrent.{Future, ExecutionContext}
 import scala.concurrent.duration._
 
 @Singleton
-class UserRepositoryImpl @Inject()(
+class UserRepositoryImpl @Inject() (
     implicit ec: ExecutionContext
 ) extends UserRepository[Future] {
 
@@ -37,7 +37,7 @@ class UserRepositoryImpl @Inject()(
     def findPasswordFromEmail(email: String): Option[Auth] = {
       def toHashedPassword(rs: WrappedResultSet) = Auth(
         authId = rs.get("auth_id"),
-        hashedPassword = rs.get("hashed_password"),
+        hashedPassword = rs.get("hashed_password")
       )
       sql"select auth_id, hashed_password from auths where email = ${email}"
         .map(rs => toHashedPassword(rs))

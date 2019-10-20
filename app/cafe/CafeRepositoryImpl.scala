@@ -9,23 +9,23 @@ import scalikejdbc._
 import scala.concurrent.ExecutionContext
 
 case class CafeRecord(
-  cafe_id: Long,
-  name: String,
-  latitude: BigDecimal,
-  longitude: BigDecimal,
-  ratings: Seq[RatingRecord] = Nil,
-  images: Seq[ImageRecord] = Nil
+    cafe_id: Long,
+    name: String,
+    latitude: BigDecimal,
+    longitude: BigDecimal,
+    ratings: Seq[RatingRecord] = Nil,
+    images: Seq[ImageRecord] = Nil
 )
 
 case class ImageRecord(
-  cafe_id: Long,
-  url: String
+    cafe_id: Long,
+    url: String
 )
 
 case class RatingRecord(
-  cafe_id: Long,
-  user_id: Long,
-  value: BigDecimal
+    cafe_id: Long,
+    user_id: Long,
+    value: BigDecimal
 )
 
 object CafeRecord extends SQLSyntaxSupport[CafeRecord] {
@@ -49,7 +49,7 @@ object ImageRecord extends SQLSyntaxSupport[ImageRecord] {
     ImageRecord(rs.get(m.cafe_id), rs.get(m.url))
 
   def opt(
-    m: SyntaxProvider[ImageRecord]
+      m: SyntaxProvider[ImageRecord]
   )(rs: WrappedResultSet): Option[ImageRecord] =
     rs.stringOpt(m.resultName.url).map(_ => ImageRecord(m)(rs))
 }
@@ -57,20 +57,19 @@ object ImageRecord extends SQLSyntaxSupport[ImageRecord] {
 object RatingRecord extends SQLSyntaxSupport[RatingRecord] {
   override val tableName = "ratings"
   def apply(r: SyntaxProvider[RatingRecord])(
-    rs: WrappedResultSet
+      rs: WrappedResultSet
   ): RatingRecord = apply(r.resultName)(rs)
   def apply(r: ResultName[RatingRecord])(rs: WrappedResultSet): RatingRecord =
     RatingRecord(rs.get(r.cafe_id), rs.get(r.user_id), rs.get(r.value))
 
   def opt(
-    m: SyntaxProvider[RatingRecord]
+      m: SyntaxProvider[RatingRecord]
   )(rs: WrappedResultSet): Option[RatingRecord] =
     rs.stringOpt(m.resultName.value).map(_ => RatingRecord(m)(rs))
 }
 
 @Singleton
-class CafeRepositoryImpl @Inject()(implicit ec: ExecutionContext)
-    extends CafeRepository {
+class CafeRepositoryImpl @Inject() (implicit ec: ExecutionContext) extends CafeRepository {
   implicit val session = AutoSession
 
   val (c, i, r) = (CafeRecord.syntax, ImageRecord.syntax, RatingRecord.syntax)
@@ -125,14 +124,14 @@ class CafeRepositoryImpl @Inject()(implicit ec: ExecutionContext)
         insert
           .into(CafeRecord)
           .namedValues(
-            c.name -> form.name,
-            c.latitude -> form.latitude,
-            c.longitude -> form.longitude,
+            c.name      -> form.name,
+            c.latitude  -> form.latitude,
+            c.longitude -> form.longitude
           )
       }.updateAndReturnGeneratedKey.apply()
     }
     def insertIntoRatings(cafeId: Long, userId: Long, value: BigDecimal)(
-      implicit session: AutoSession
+        implicit session: AutoSession
     ) = {
       withSQL {
         insert
@@ -140,12 +139,12 @@ class CafeRepositoryImpl @Inject()(implicit ec: ExecutionContext)
           .namedValues(
             r.cafe_id -> cafeId,
             r.user_id -> userId,
-            r.value -> value,
+            r.value   -> value
           )
       }.update.apply()
     }
     def insertIntoImages(cafeId: Long, imageUrls: Seq[String])(
-      implicit session: AutoSession
+        implicit session: AutoSession
     ) = {
       val batchParams: Seq[Seq[Any]] = imageUrls.map(u => cafeId :: u :: Nil)
       withSQL {
@@ -167,7 +166,7 @@ class CafeRepositoryImpl @Inject()(implicit ec: ExecutionContext)
     }
 
     for {
-      cafeId <- insertCafe()
+      cafeId  <- insertCafe()
       cafeOpt <- findById(cafeId)
     } yield cafeOpt
 

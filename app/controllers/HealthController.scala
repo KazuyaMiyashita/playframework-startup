@@ -7,7 +7,7 @@ import scalikejdbc._
 import scalikejdbc.config._
 
 @Singleton
-class HealthController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class HealthController @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
 
   DBs.setupAll()
 

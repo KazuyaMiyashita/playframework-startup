@@ -1,6 +1,6 @@
 package auth.driver
 
-import auth.controller.UserRequest
+import auth.driver.UserRequest
 import auth.domain.entities.User
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Request, Result}
@@ -8,7 +8,7 @@ import play.api.mvc.{Request, Result}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserRefinerMock @Inject()(implicit override protected val executionContext: ExecutionContext)
+class UserRefinerMock @Inject() (implicit override protected val executionContext: ExecutionContext)
     extends UserRefiner {
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, UserRequest[A]]] = Future.successful {
