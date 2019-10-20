@@ -1,36 +1,37 @@
-package auth
+package auth.repository
 
-import javax.inject.{Singleton, Inject}
-import auth.entity.{User, Token}
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext
-import scalikejdbc._
+import auth.domain.entities.{Token, User}
+import javax.inject.{Inject, Singleton}
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import scalikejdbc._
+
+import scala.concurrent.{Future, ExecutionContext}
 import scala.concurrent.duration._
 
 @Singleton
 class UserRepositoryImpl @Inject()(
-  implicit ec: ExecutionContext
-) extends UserRepository {
+    implicit ec: ExecutionContext
+) extends UserRepository[Future] {
 
-  implicit val session = AutoSession
+  implicit val session        = AutoSession
   val tokenExpirationDuration = 1.day
 
-  private val bcrypt = new BCryptPasswordEncoder()
+  private val bcrypt                               = new BCryptPasswordEncoder()
   private def createHash(password: String): String = bcrypt.encode(password)
   private def authenticate(rawPassword: String, hashedPassword: String): Boolean =
     bcrypt.matches(rawPassword, hashedPassword)
 
-  def createUser(email: String, rawPassword: String, name: String): Future[User] = Future {
+  override def createUser(email: String, rawPassword: String, name: String): Future[User] = Future.successful {
     val hashedPassword = createHash(rawPassword)
-    val authId: Long = sql"insert into auths (email, hashed_password) values (${email}, ${hashedPassword})"
-      .updateAndReturnGeneratedKey.apply()
-    val userId: Long = sql"insert into users (auth_id, name) values (${authId}, ${name})"
-      .updateAndReturnGeneratedKey.apply()
+    val authId: Long =
+      sql"insert into auths (email, hashed_password) values (${email}, ${hashedPassword})".updateAndReturnGeneratedKey
+        .apply()
+    val userId: Long =
+      sql"insert into users (auth_id, name) values (${authId}, ${name})".updateAndReturnGeneratedKey.apply()
     User(userId, name)
   }
 
-  def login(email: String, rawPassword: String): Future[Option[Token]] = {
+  override def login(email: String, rawPassword: String): Future[Option[Token]] = {
 
     case class Auth(authId: Long, hashedPassword: String)
     def findPasswordFromEmail(email: String): Option[Auth] = {
@@ -40,7 +41,8 @@ class UserRepositoryImpl @Inject()(
       )
       sql"select auth_id, hashed_password from auths where email = ${email}"
         .map(rs => toHashedPassword(rs))
-        .single.apply()
+        .single
+        .apply()
     }
 
     def saveToken(auth: Auth): Token = {
@@ -50,19 +52,17 @@ class UserRepositoryImpl @Inject()(
         rnd.setSeed(java.util.Calendar.getInstance.getTimeInMillis)
 
         val ts = (('A' to 'Z').toList :::
-        ('a' to 'z').toList :::
-        ('0' to '9').toList :::
-        List('-', '.', '_', '~', '+', '/'))
-        .toArray
-  
-        val tsLen = ts.length
+          ('a' to 'z').toList :::
+          ('0' to '9').toList :::
+          List('-', '.', '_', '~', '+', '/')).toArray
+
+        val tsLen  = ts.length
         val length = 64
-    
+
         Token("Bearer " + List.fill(length)(ts(rnd.nextInt(tsLen))).mkString)
       }
       val token = createRandomToken()
-      sql"insert into tokens (token, auth_id) values (${token.value}, ${auth.authId})"
-        .update.apply()
+      sql"insert into tokens (token, auth_id) values (${token.value}, ${auth.authId})".update.apply()
 
       token
     }
@@ -75,7 +75,7 @@ class UserRepositoryImpl @Inject()(
     }
   }
 
-  def findByToken(token: String): Future[Option[User]] = {
+  override def findByToken(token: String): Future[Option[User]] = {
     def mkUserEntity(rs: WrappedResultSet) = User(
       id = rs.get("user_id"),
       name = rs.get("name")
@@ -92,10 +92,9 @@ class UserRepositoryImpl @Inject()(
             and created_at >= current_timestamp - interval ${tokenExpirationDuration.toMinutes} minute;
       """
         .map(rs => mkUserEntity(rs))
-        .single.apply()
+        .single
+        .apply()
     }
 
   }
-
-  
 }

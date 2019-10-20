@@ -1,14 +1,14 @@
 package cafe
 
-import javax.inject.{Singleton, Inject}
+import auth.driver.UserRefiner
+import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import models.Cafe
-import auth.UserRefiner
 import utils.FormUtils.bindFromRequest
+
 import scala.concurrent.Future
 import cats.data.EitherT
 import cats.implicits._
-
 import utils.CirceWritable._
 
 @Singleton
@@ -21,7 +21,7 @@ class CafeController @Inject()(
   implicit val ec = cc.executionContext
 
   def all() = Action.async { request =>
-  
+
     cafeRepository.findAll.map { cafes =>
       Ok(CafeResponse.fromSeq(cafes))
     }
