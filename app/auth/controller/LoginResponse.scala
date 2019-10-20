@@ -1,6 +1,6 @@
-package auth
+package auth.controller
 
-import auth.entity.Token
+import auth.domain.entities.Token
 import io.circe.Json
 import io.circe.syntax._
 

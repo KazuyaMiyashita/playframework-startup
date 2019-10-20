@@ -1,13 +1,13 @@
-package auth
+package auth.controller
 
-import auth.entity.User
+import auth.domain.entities.User
 import io.circe.Json
 import io.circe.syntax._
 
 case class CreateUserResponse(user: User) {
 
   def json: Json = Json.obj(
-    "id" -> user.id.asJson,
+    "id"   -> user.id.asJson,
     "user" -> user.name.asJson
   )
 
