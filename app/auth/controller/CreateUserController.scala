@@ -2,7 +2,6 @@ package auth.controller
 
 import auth.domain.entities.User
 import auth.repository.UserRepository
-import cats.Monad
 import cats.data.EitherT
 import cats.implicits._
 import javax.inject.{Inject, Singleton}
@@ -11,7 +10,6 @@ import utils.CirceWritable._
 import utils.FormUtils.bindFromRequest
 
 import scala.concurrent.Future
-import scala.language.higherKinds
 
 @Singleton
 class CreateUserController @Inject()(

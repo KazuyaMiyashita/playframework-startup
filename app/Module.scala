@@ -9,8 +9,7 @@ import scala.concurrent.Future
 class Module extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[UserRefiner]).to(classOf[UserRefinerMock])
-    bind(new TypeLiteral[UserRepository[Future]]() {})
-      .to(classOf[UserRepositoryImpl])
+    bind(new TypeLiteral[UserRepository[Future]]() {}).to(classOf[UserRepositoryImpl])
     bind(classOf[CafeRepository]).to(classOf[CafeRepositoryImpl])
   }
 }
